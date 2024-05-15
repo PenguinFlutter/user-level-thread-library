@@ -1,0 +1,34 @@
+# user thread library
+lib := libuthread.a
+
+# object filenames
+objs := queue.o uthread.o sem.o context.o preempt.o
+
+# compiler flags
+CC := gcc
+CFLAGS := -Wall -Wextra -Werror
+
+# setting V=1 enables echoing
+ifneq ($(V), 1)
+Q = @
+endif
+
+default: $(lib)
+
+# dependency tracking
+deps := $(patsubst %.o, %.d, $(objs))
+-include $(deps)
+
+$(lib): $(objs)
+	@echo "LD $@"
+	$(Q)ar rcs $@ $^
+
+%.o: %.c 
+	@echo "CC $@"
+	$(Q)$(CC) $(CFLAGS) -c -o $@ $<
+
+clean:
+	@echo "CLEAN"
+	@rm -f $(lib) $(objs)
+
+
